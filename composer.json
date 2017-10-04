@@ -1,0 +1,25 @@
+{
+    "name": "maplet/sdk",
+    "description": "A PHP wrapper for Maplet's API",
+    "keywords": ["maplet", "api"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maplet API Team",
+            "email": "contact@maplet.com"
+        }
+    ],
+    "type": "project",
+    "require": {
+		    "php": ">=5.5",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+	"require-dev": {
+		"phpunit/phpunit": "5.2.*"
+    },
+	"autoload": {
+        "psr-4": {
+            "Maplet\\": "src/"
+        }
+    }
+}
