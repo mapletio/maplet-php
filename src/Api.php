@@ -114,7 +114,7 @@ class Api
      */
     private function throwException($constant)
     {
-        $message  = __v($this->errors, $constant, 'Error');
+        $message  = empty($this->errors[$constant]) ? 'Error' : $this->errors[$constant];
         $response = $this->getResponse();
         if (!empty($response->error)) {
             $message .= ' - ' . $response->error;
@@ -171,15 +171,22 @@ class Api
      * @return mixed|\Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
-    public function setWebhookUrl($url, $username, $password)
+    public function setWebhookUrl($url, $username = "", $password = "")
     {
-        $res = $this->put($this->getPartnerMapUrl('webhook'), [
-            'url'                  => $url,
-            'basicAuthCredentials' => [
-                'userName' => $username,
-                'password' => $password,
-            ],
-        ]);
+        if(strlen($username) > 0) {
+          $res = $this->put($this->getPartnerMapUrl('webhook'), [
+              'url'                  => $url,
+              'basicAuthCredentials' => [
+                  'userName' => $username,
+                  'password' => $password,
+              ],
+          ]);
+        }
+        else {
+          $res = $this->put($this->getPartnerMapUrl('webhook'), [
+              'url'                  => $url
+          ]);
+        }
 
         if ($res === false) {
             $this->throwException(self::ERROR_SETTING_WEBHOOK_FAILED);
