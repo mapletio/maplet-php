@@ -25,6 +25,11 @@ class Api
     const ERROR_ROLE_CREATE_FAILED          = 5000;
     const ERROR_ROLE_DELETE_FAILED          = 5001;
 
+    const ERROR_PLACE_FIELD_CREATE_FAILED         = 6000;
+    const ERROR_PLACE_FIELD_READ_FAILED           = 6001;
+    const ERROR_PLACE_FIELD_UPDATE_FAILED         = 6002;
+    const ERROR_PLACE_FIELD_DELETE_FAILED         = 6003;
+
     private $errors = [
         self::ERROR_WRONG_PARTNER_CREDENTIALS   => 'Wrong partner credentials',
         self::ERROR_SETTING_WEBHOOK_FAILED      => 'Setting Webhook failed',
@@ -43,6 +48,11 @@ class Api
 
         self::ERROR_ROLE_CREATE_FAILED          => 'Role create failed',
         self::ERROR_ROLE_DELETE_FAILED          => 'Role delete failed',
+
+        self::ERROR_PLACE_FIELD_CREATE_FAILED         => 'Place field create failed',
+        self::ERROR_PLACE_FIELD_READ_FAILED           => 'Place field read failed',
+        self::ERROR_PLACE_FIELD_UPDATE_FAILED         => 'Place field update failed',
+        self::ERROR_PLACE_FIELD_DELETE_FAILED         => 'Place field delete failed',
     ];
 
     private $partnerApiUrl = "https://my.maplet.com/api/partner/v1";
@@ -523,5 +533,78 @@ class Api
         $this->mapName = $mapName;
 
         return $this;
+    }
+
+    // Place field API
+
+    /**
+     * @param $fieldName
+     * @param $fieldType
+     * @param $fieldOptions
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function createPlaceField($fieldName, $fieldType, $fieldOptions = [])
+    {
+        $field = [];
+        $field['fieldOptions'] = $fieldOptions;
+        $field['name'] = $fieldName;
+        $field['type'] = $fieldType;
+        $res = $this->post($this->getCustomerMapUrl('places/fields'), $field);
+        if ($res === false) {
+            $this->throwException(self::ERROR_PLACE_FIELD_CREATE_FAILED);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $fieldName
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function readPlaceField($fieldName)
+    {
+        $res = $this->get($this->getCustomerMapUrl('places/fields/' . $fieldName));
+        if ($res === false) {
+            $this->throwException(self::ERROR_PLACE_FIELD_READ_FAILED);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $fieldName
+     * @param $fieldOptions
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function updatePlaceField($fieldName, $fieldOptions)
+    {
+        $res                   = $this->put($this->getCustomerMapUrl('places/fields/' . $fieldName), $fieldOptions);
+        if ($res === false) {
+            $this->throwException(self::ERROR_PLACE_FIELD_UPDATE_FAILED);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $fieldName
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function deletePlaceField($fieldName)
+    {
+        $res = $this->delete($this->getCustomerMapUrl('places/fields/' . $fieldName));
+        if ($res === false) {
+            $this->throwException(self::ERROR_PLACE_FIELD_DELETE_FAILED);
+        }
+
+        return $res;
     }
 }
