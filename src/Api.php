@@ -16,6 +16,7 @@ class Api
     const ERROR_USER_ADD_FAILED             = 3000;
     const ERROR_USER_REMOVE_FAILED          = 3001;
     const ERROR_USERS_FETCH_FAILED          = 3002;
+    const ERROR_USER_CHANGE_ROLE_FAILED     = 3003;
 
     const ERROR_PLACE_CREATE_FAILED         = 4000;
     const ERROR_PLACE_READ_FAILED           = 4001;
@@ -23,7 +24,8 @@ class Api
     const ERROR_PLACE_DELETE_FAILED         = 4003;
 
     const ERROR_ROLE_CREATE_FAILED          = 5000;
-    const ERROR_ROLE_DELETE_FAILED          = 5001;
+    const ERROR_ROLE_UPDATE_FAILED          = 5001;
+    const ERROR_ROLE_DELETE_FAILED          = 5002;
 
     const ERROR_PLACE_FIELD_CREATE_FAILED         = 6000;
     const ERROR_PLACE_FIELD_READ_FAILED           = 6001;
@@ -40,6 +42,7 @@ class Api
         self::ERROR_USER_ADD_FAILED             => 'User add failed',
         self::ERROR_USER_REMOVE_FAILED          => 'User remove failed',
         self::ERROR_USERS_FETCH_FAILED          => 'Users fetch failed',
+        self::ERROR_USER_CHANGE_ROLE_FAILED     => 'User role change failed',
 
         self::ERROR_PLACE_CREATE_FAILED         => 'Place create failed',
         self::ERROR_PLACE_READ_FAILED           => 'Place read failed',
@@ -47,6 +50,7 @@ class Api
         self::ERROR_PLACE_DELETE_FAILED         => 'Place delete failed',
 
         self::ERROR_ROLE_CREATE_FAILED          => 'Role create failed',
+        self::ERROR_ROLE_UPDATE_FAILED          => 'Role update failed',
         self::ERROR_ROLE_DELETE_FAILED          => 'Role delete failed',
 
         self::ERROR_PLACE_FIELD_CREATE_FAILED         => 'Place field create failed',
@@ -282,11 +286,36 @@ class Api
      * @return mixed
      * @throws \Exception
      */
-    public function removeMapUser($phoneNumberOrdConnetionId)
+    public function removeMapUser($phoneNumberOrConnectionId)
     {
-        $res = $this->delete($this->getCustomerMapUrl('users/invite/' . $phoneNumberOrdConnetionId));
+        $res = $this->delete($this->getCustomerMapUrl('users/invite/' . $phoneNumberOrConnectionId));
         if ($res === false) {
             $this->throwException(self::ERROR_USER_REMOVE_FAILED);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param        $phoneNumber
+     *
+     * @param string $roleName
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function changeMapUserRole($phoneNumberOrConnectionId, $roleName = '')
+    {
+        echo $phoneNumber;
+        echo $roleName;
+
+        $res = $this->post($this->getCustomerMapUrl('users/changeRole'), [
+            'phoneNumberOrConnectionId' => $phoneNumberOrConnectionId,
+            'roleName'    => $roleName,
+        ]);
+
+        if ($res === false) {
+            $this->throwException(self::ERROR_USER_ADD_FAILED);
         }
 
         return $res;
@@ -361,18 +390,42 @@ class Api
     /**
      * @param $roleName
      * @param $templateName
+     * @param $options
      *
      * @return mixed
      * @throws \Exception
      */
-    public function createRole($roleName, $templateName)
+    public function createRole($roleName, $templateName, $options = [])
     {
         $res = $this->post($this->getCustomerMapUrl('roles'), [
+            'options' => $options,
             'roleName'     => $roleName,
             'templateName' => $templateName,
         ]);
         if ($res === false) {
             $this->throwException(self::ERROR_ROLE_CREATE_FAILED);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $roleName
+     * @param $templateName
+     * @param $options
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function updateRole($roleName, $templateName, $options = [])
+    {
+        $res = $this->put($this->getCustomerMapUrl('roles'), [
+            'options' => $options,
+            'roleName'     => $roleName,
+            'templateName' => $templateName,
+        ]);
+        if ($res === false) {
+            $this->throwException(self::ERROR_ROLE_UPDATE_FAILED);
         }
 
         return $res;
@@ -547,8 +600,7 @@ class Api
      */
     public function createPlaceField($fieldName, $fieldType, $fieldOptions = [])
     {
-        $field = [];
-        $field['fieldOptions'] = $fieldOptions;
+        $field = $fieldOptions;
         $field['name'] = $fieldName;
         $field['type'] = $fieldType;
         $res = $this->post($this->getCustomerMapUrl('places/fields'), $field);
