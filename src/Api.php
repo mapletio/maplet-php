@@ -306,11 +306,7 @@ class Api
      */
     public function changeMapUserRole($phoneNumberOrConnectionId, $roleName = '')
     {
-        echo $phoneNumber;
-        echo $roleName;
-
-        $res = $this->post($this->getCustomerMapUrl('users/changeRole'), [
-            'phoneNumberOrConnectionId' => $phoneNumberOrConnectionId,
+        $res = $this->put($this->getCustomerMapUrl('users/changeRole/' . $phoneNumberOrConnectionId), [
             'roleName'    => $roleName,
         ]);
 
