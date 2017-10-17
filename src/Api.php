@@ -266,11 +266,11 @@ class Api
      * @return mixed
      * @throws \Exception
      */
-    public function addMapUser($phoneNumber, $roleName = '')
+    public function addMapUser($phoneNumber, $roleNames = [])
     {
         $res = $this->post($this->getCustomerMapUrl('users/invite'), [
             'phoneNumber' => $phoneNumber,
-            'roleName'    => $roleName,
+            'roleNames'    => $roleNames,
         ]);
 
         if ($res === false) {
@@ -304,10 +304,10 @@ class Api
      * @return mixed
      * @throws \Exception
      */
-    public function changeMapUserRole($phoneNumberOrConnectionId, $roleName = '')
+    public function changeMapUserRole($phoneNumberOrConnectionId, $roleNames = [])
     {
         $res = $this->put($this->getCustomerMapUrl('users/changeRole/' . $phoneNumberOrConnectionId), [
-            'roleName'    => $roleName,
+            'roleNames'    => $roleNames,
         ]);
 
         if ($res === false) {
@@ -655,4 +655,7 @@ class Api
 
         return $res;
     }
+
+
+
 }
