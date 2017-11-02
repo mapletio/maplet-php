@@ -87,7 +87,7 @@ class Api
         $this->response  = [];
         $this->apiKey    = $apiKey;
         $this->partnerId = $partnerId;
-        $this->client    = new \GuzzleHttp\Client();
+        $this->client    = new \GuzzleHttp\Client(['http_errors' => false]);
         $this->mapName   = $mapletName;
         $this->signin();
     }
@@ -134,6 +134,8 @@ class Api
         $response = $this->getResponse();
         if (!empty($response->error)) {
             $message .= ' - ' . $response->error;
+        } else if(!empty($response->err)) {
+            $message .= ' - ' . $response->err;
         }
 
         throw new Exception($message, $constant);
