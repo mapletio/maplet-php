@@ -22,6 +22,7 @@ class Api
     const ERROR_PLACE_READ_FAILED           = 4001;
     const ERROR_PLACE_UPDATE_FAILED         = 4002;
     const ERROR_PLACE_DELETE_FAILED         = 4003;
+    const ERROR_PLACES_DELETE_FAILED         = 4004;
 
     const ERROR_ROLE_CREATE_FAILED          = 5000;
     const ERROR_ROLE_UPDATE_FAILED          = 5001;
@@ -48,6 +49,7 @@ class Api
         self::ERROR_PLACE_READ_FAILED           => 'Place read failed',
         self::ERROR_PLACE_UPDATE_FAILED         => 'Place update failed',
         self::ERROR_PLACE_DELETE_FAILED         => 'Place delete failed',
+        self::ERROR_PLACES_DELETE_FAILED         => 'Places delete failed',
 
         self::ERROR_ROLE_CREATE_FAILED          => 'Role create failed',
         self::ERROR_ROLE_UPDATE_FAILED          => 'Role update failed',
@@ -378,6 +380,24 @@ class Api
         $res = $this->delete($this->getCustomerMapUrl('places/' . $placeId));
         if ($res === false) {
             $this->throwException(self::ERROR_PLACE_DELETE_FAILED);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $fieldName
+     * @param $fieldValue
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function deletePlaces($fieldName, $fieldValue)
+    {
+        $res = $this->delete($this->getCustomerMapUrl('places/multi/' . $fieldName . '/' . $fieldValue ));
+        var_dump($res);
+        if ($res === false) {
+            $this->throwException(self::ERROR_PLACES_DELETE_FAILED);
         }
 
         return $res;
