@@ -473,7 +473,7 @@ class Api
             array_merge(
                 $this->headers,
                 [
-                    'form_params' => $formParams,
+                    'json' => $formParams,
                 ]
             )
         );
